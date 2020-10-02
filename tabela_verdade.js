@@ -43,6 +43,7 @@ function gerarTabela(prop) {
 				r = "("+r+")";
 				str = str.replaceAll(i.toString(), r);
 		}
+		str = str.replaceAll("&", ".");
 		str = str.replaceAll(">", "->");
 		str = str.replaceAll("=", "<->");
 		return str;
@@ -73,7 +74,8 @@ function gerarTabela(prop) {
 	// deitar tudo em lowercase
 	proposicao = proposicao.replace(/[A-Z]/g, (s) => s.toLowerCase())
 
-	// substituir -> por > e <-> por =
+	// substituir -> por > e <-> por = e . por &
+	proposicao = proposicao.replaceAll(".", "&");
 	proposicao = proposicao.replaceAll("<->", "=");
 	proposicao = proposicao.replaceAll("->", ">");
 
@@ -113,15 +115,15 @@ function gerarTabela(prop) {
 				indice = n-1;
 			}
 			novoPedaco = pedaco.replace(/([0-9]+\')/, indice);
-		} else if (pedaco.indexOf(".") !=-1) {
-			let elemento1 = numeroEm(pedaco, pedaco.indexOf(".")-1);
-			let elemento2 = numeroEm(pedaco, pedaco.indexOf(".")+1);
-			let indice = indiceProposicao(elemento1+"."+elemento2);
+		} else if (pedaco.indexOf("&") !=-1) {
+			let elemento1 = numeroEm(pedaco, pedaco.indexOf("&")-1);
+			let elemento2 = numeroEm(pedaco, pedaco.indexOf("&")+1);
+			let indice = indiceProposicao(elemento1+"&"+elemento2);
 			if (indice == -1) {
-				proposicoes[n++] = {str: elemento1+"."+elemento2, type: 2, values: [elemento1, elemento2]};
+				proposicoes[n++] = {str: elemento1+"&"+elemento2, type: 2, values: [elemento1, elemento2]};
 				indice = n-1;
 			}
-			novoPedaco = pedaco.replace(/([0-9]+\.[0-9]+)/, indice);
+			novoPedaco = pedaco.replace(/([0-9]+\&[0-9]+)/, indice);
 		} else if (pedaco.indexOf("+") !=-1) {
 			let elemento1 = numeroEm(pedaco, pedaco.indexOf("+")-1);
 			let elemento2 = numeroEm(pedaco, pedaco.indexOf("+")+1);
