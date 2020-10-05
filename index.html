@@ -40,23 +40,55 @@
 	                </table>
 	            </div>
 	        </li>
+	        <li class="uk-open uk-hidden" id="euler">
+	            <a class="uk-accordion-title" href="#">Diagramas de Venn</a>
+	            <div class="uk-accordion-content">
+	                <table class="uk-table uk-table-small uk-table-divider">
+	                    <thead>
+	                    </thead>
+	                    <tbody>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </li>
     	</ul>
+    	<div class="uk-alert-danger uk-hidden" id="invalido" uk-alert>
+		    <p>Proposição inválida!</p>
+		</div>
 		<script type="text/javascript">
-			$("form").on("submit", function() {
+			$("form").on("submit", function(e) {
+				e.preventDefault();
 				proposicao_base = $("input").val();
-				tabela = gerarTabela(proposicao_base);
-				$("#tabelaVerdade").removeClass("uk-hidden");
-				let ths = "";
-				tabela[0].forEach((col) => ths += "<th>"+col+"</th>");
-				$("#tabelaVerdade thead").html("<tr>"+ths+"</tr>");
-				let trs = "";
-				tabela.forEach((row, i) => {
-					if (i==0) return;
-					let tds = "";
-					row.forEach((col) => tds += "<th>"+col+"</th>");
-					trs += "<tr>"+tds+"</tr>";
-				});
-				$("#tabelaVerdade tbody").html(trs);
+				let ret = gerarTabela(proposicao_base);
+				if (ret.tabela[0].length == 0) {
+					$("#tabelaVerdade").addClass("uk-hidden");
+					$("#euler").addClass("uk-hidden");
+					$("#invalido").removeClass("uk-hidden");
+				} else {
+					tabela = ret.tabela;
+					$("#tabelaVerdade").removeClass("uk-hidden");
+					$("#invalido").addClass("uk-hidden");
+					let ths = "";
+					tabela[0].forEach((col) => ths += "<th>"+col+"</th>");
+					$("#tabelaVerdade thead").html("<tr>"+ths+"</tr>");
+					let trs = "";
+					tabela.forEach((row, i) => {
+						if (i==0) return;
+						let tds = "";
+						row.forEach((col) => tds += "<td>"+col+"</td>");
+						trs += "<tr>"+tds+"</tr>";
+					});
+					$("#tabelaVerdade tbody").html(trs);
+					if (ret.euler.length !=0 ) {
+						let trs = "";
+						$("#euler thead").html("<tr>"+ths+"</tr>");
+						$("#euler").removeClass("uk-hidden");
+						let tds = "";
+						ret.euler.forEach((img) => tds += "<td><img style='border: 1px solid red;' src='"+img+"'/></td>")
+						trs += "<tr>"+tds+"</tr>";
+						$("#euler tbody").html(trs);
+					} else $("#euler").addClass("uk-hidden");
+				}
 				return false;
 			});
 		</script>
